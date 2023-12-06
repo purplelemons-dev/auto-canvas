@@ -17,7 +17,29 @@ if (window.location.href.match(/https?:\/\/collin\.instructure\.com\/courses\/\d
                 };
             });
 
-            (await fetch("http://localhost:2048/v1/autocanvas/google", {
+            const model_answer = await fetch("http://localhost:2048/v1/autocanvas/gpt", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    question: question_text,
+                    options: options
+                })
+            }).then(res => res.json()).then(data => data["model_answer"]);
+
+            console.log(`Model Answer: ${model_answer}`);
+            if (model_answer !== "No answer found :(") {
+                for (let option of options) {
+                    if (option.text === model_answer) {
+                        option.object.style.backgroundColor = "green";
+                        break;
+                    }
+                }
+            }
+
+
+            /*(await fetch("http://localhost:2048/v1/autocanvas/google", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
@@ -57,7 +79,7 @@ if (window.location.href.match(/https?:\/\/collin\.instructure\.com\/courses\/\d
                 } else {
                     question.appendChild(box).value = "No answer found :(";
                 }
-            });
+            });*/
         });
     }
 }
