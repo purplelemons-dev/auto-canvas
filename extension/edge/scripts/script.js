@@ -32,6 +32,7 @@ if (window.location.href.match(/https?:\/\/collin\.instructure\.com\/courses\/\d
             if (model_answer !== "No answer found :(") {
                 for (let option of options) {
                     if (option.text === model_answer) {
+                        option.object.querySelector("span.answer_input").click();
                         option.object.style.backgroundColor = "green";
                         break;
                     }
