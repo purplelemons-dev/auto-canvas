@@ -1,0 +1,30 @@
+{
+    "$schema": "https://json.schemastore.org/chrome-manifest",
+    "manifest_version": 2,
+    "name": "AutoCanvas",
+    "version": "0.0.1",
+    "description": "Automatically Googles answers for questions on canvas",
+    "icons": {
+        "1024": "icons/icon.png"
+    },
+    "content_scripts": [
+        {
+            "matches": [
+                "https://collin.instructure.com/courses/*/quizzes/*/take*"
+            ],
+            "js": [
+                "scripts/script.js"
+            ],
+            "run_at": "document_end"
+        }
+    ],
+    "permissions": [
+        "activeTab",
+        "https://api.cyberthing.dev/*",
+        "http://localhost:2048/*",
+        "https://collin.instructure.com/*",
+        "webRequest",
+        "webRequestBlocking"
+    ],
+    "content_security_policy": "script-src 'self' http://localhost:2048; object-src 'self'"
+}
