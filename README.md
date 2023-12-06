@@ -2,6 +2,8 @@
 
 browser extension (developed for Edge) to automatically google quizlet answers.
 
+https://github.com/purplelemons-dev/auto-canvas/assets/63922192/9efa3537-cd2d-4836-90e5-7de26e33f0df
+
 ## setup
 
 ### server
