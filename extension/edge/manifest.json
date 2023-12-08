@@ -12,6 +12,9 @@
             "matches": [
                 "https://collin.instructure.com/courses/*/quizzes/*/take*"
             ],
+            "css": [
+                "css/main.css"
+            ],
             "js": [
                 "scripts/script.js"
             ],

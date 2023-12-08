@@ -2,6 +2,7 @@
 import express from "express";
 import { env } from "./env"
 import OpenAI from "openai";
+import { JSDOM } from "jsdom";
 
 const app = express();
 const HOST = "localhost";
@@ -9,12 +10,16 @@ const PORT = 2048;
 const openai = new OpenAI({ apiKey: env.openai, organization: env.openaiOrg });
 
 app.use(express.json());
+app.use((req, res, next) => {
+    if (req.method === 'POST') {
+        res.setHeader("Access-Control-Allow-Origin", "https://collin.instructure.com");
+    }
+    next();
+});
 
 app.post("/v1/autocanvas/google", async (req, res) => {
-    res.setHeader("Access-Control-Allow-Origin", "*");
     const {
-        question,
-        options
+        question
     }: {
         question: string,
         options: string[]
@@ -45,46 +50,76 @@ app.post("/v1/autocanvas/google", async (req, res) => {
 });
 
 app.post("/v1/autocanvas/gpt", async (req, res) => {
-    res.setHeader("Access-Control-Allow-Origin", "*");
     const {
         question,
         options
     }: {
         question: string,
         options: {
-            text: string;
-            object: Element;
+            letter: string,
+            text: string
         }[]
     } = req.body;
-    const result = await openai.chat.completions.create({
-        model: "gpt-4-1106-preview",
-        messages: [
-            {
-                role: "system",
-                content: "You will answer using only ONE line of text ONLY from the user's prompt."
-            },
-            {
-                role: "user",
-                content: `Q: ${question}\n\nA:\n` + options.map(({ text }) => text).join("\n")
-            }
-        ]
-    })
-    if (result.choices.length === 0) {
-        res.sendStatus(404);
-        return;
-    }
+
+    const response_format = `
+{
+    answers: {
+        letter: string,
+        reason: string
+    }[]
+}`;
+
+    const formattedOptions = options.map(({ letter, text }) => {
+        return `${letter}) ${text}`;
+    }).join("\n");
+
     try {
-        const model_answer = result.choices[0].message.content || "";
-        res.json({
-            model_answer: model_answer
+        (await
+            fetch(`https://customsearch.googleapis.com/customsearch/v1?key=${env.key}&cx=${env.cx}&q=${encodeURIComponent(question)}`)
+        ).json().then(async (result) => {
+
+            const link = result.items[0].link;
+            (await fetch(link)).text().then(async (quizlet_page) => {
+                const document = new JSDOM(quizlet_page).window.document;
+                if (document !== null) {
+                    const infoElement = document.querySelectorAll("span[class$=wordText]");
+                    const questions = Array.from(infoElement).map((info) => info.textContent);
+                    const answerElements = document.querySelectorAll("a[class$=definitionText]");
+                    const answers = Array.from(answerElements).map((answer) => answer.textContent);
+                    const formattedQA = questions.map((question, index) => `Q: ${question}\nA: ${answers[index]}`).join("\n");
+                    res.json({
+                        model_answer: JSON.parse(
+                            (await
+                                openai.chat.completions.create({
+                                    model: "gpt-4-1106-preview",
+                                    messages: [
+                                        {
+                                            role: "system",
+                                            content: `Answer using the following JSON format ONLY:${response_format}`
+                                        },
+                                        {
+                                            role: "user",
+                                            content: `Context:\n${formattedQA}\nQ: ${question}\n\n${formattedOptions}`
+                                        }
+                                    ],
+                                    top_p: 0.9,
+                                    temperature: 0.69, // nice
+                                    response_format: { "type": "json_object" }
+                                })
+                            ).choices[0].message.content || "[]"
+                        ).answers
+                    });
+                }
+            });
         });
+    } catch (e) {
+        res.status(500).send(e);
     }
-    catch { res.sendStatus(500); }
 });
 
 
 app.options("/v1/autocanvas/*", (req, res) => {
-    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader("Access-Control-Allow-Origin", "https://collin.instructure.com");
     res.setHeader("Access-Control-Allow-Methods", "POST");
     res.setHeader("Access-Control-Allow-Headers", "Content-Type");
     res.end();
