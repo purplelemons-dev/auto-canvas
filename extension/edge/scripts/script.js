@@ -18,7 +18,7 @@ if (window.location.href.match(/https?:\/\/collin\.instructure\.com\/courses\/\d
                 };
             });
 
-            const model_answer = await fetch("http://localhost:2048/v1/autocanvas/gpt", {
+            const model_answer = await fetch("https://autocanvas.cyberthing.dev/v1/autocanvas/gpt", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
