@@ -6,7 +6,7 @@ import { JSDOM } from "jsdom";
 
 const app = express();
 const HOST = "localhost";
-const PORT = 2048;
+const PORT = 5500;
 const openai = new OpenAI({ apiKey: env.openai, organization: env.openaiOrg });
 
 app.use(express.json());
@@ -95,18 +95,20 @@ app.post("/v1/autocanvas/gpt", async (req, res) => {
                                     messages: [
                                         {
                                             role: "system",
-                                            content: `Answer using the following JSON format ONLY:${response_format}`
+                                            content: `You will answer using JSON ONLY. Use this typescript format:${response_format}`
                                         },
                                         {
                                             role: "user",
                                             content: `Context:\n${formattedQA}\nQ: ${question}\n\n${formattedOptions}`
                                         }
                                     ],
-                                    top_p: 0.9,
-                                    temperature: 0.69, // nice
+                                    top_p: 0.1,
+                                    temperature: 0.0,
+                                    max_tokens: 128,
+                                    seed: 42069,
                                     response_format: { "type": "json_object" }
                                 })
-                            ).choices[0].message.content || "[]"
+                            ).choices[0].message.content || "{answers: []}"
                         ).answers
                     });
                 }
