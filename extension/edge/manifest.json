@@ -1,8 +1,8 @@
 {
     "$schema": "https://json.schemastore.org/chrome-manifest",
-    "manifest_version": 2,
+    "manifest_version": 3,
     "name": "AutoCanvas",
-    "version": "0.0.1",
+    "version": "1.0.0",
     "description": "Automatically Googles answers for questions on canvas",
     "icons": {
         "1024": "icons/icon.png"
@@ -28,6 +28,5 @@
         "https://collin.instructure.com/*",
         "webRequest",
         "webRequestBlocking"
-    ],
-    "content_security_policy": "script-src 'self' http://localhost:2048; object-src 'self'"
+    ]
 }
