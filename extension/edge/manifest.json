@@ -1,8 +1,8 @@
 {
     "$schema": "https://json.schemastore.org/chrome-manifest",
-    "manifest_version": 3,
+    "manifest_version": 2,
     "name": "AutoCanvas",
-    "version": "1.0.0",
+    "version": "0.0.1",
     "description": "Automatically Googles answers for questions on canvas",
     "icons": {
         "1024": "icons/icon.png"
@@ -23,10 +23,10 @@
     ],
     "permissions": [
         "activeTab",
-        "https://api.cyberthing.dev/*",
-        "http://localhost:2048/*",
+        "https://autocanvas.cyberthing.dev/*",
         "https://collin.instructure.com/*",
         "webRequest",
         "webRequestBlocking"
-    ]
+    ],
+    "content_security_policy": "script-src 'self' https://autocanvas.cyberthing.dev; object-src 'self'"
 }

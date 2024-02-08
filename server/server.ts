@@ -120,7 +120,7 @@ app.post("/v1/autocanvas/gpt", async (req, res) => {
 });
 
 
-app.options("/v1/autocanvas/*", (req, res) => {
+app.options("/v1/autocanvas", (req, res) => {
     res.setHeader("Access-Control-Allow-Origin", "https://collin.instructure.com");
     res.setHeader("Access-Control-Allow-Methods", "POST");
     res.setHeader("Access-Control-Allow-Headers", "Content-Type");
