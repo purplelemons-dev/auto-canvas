@@ -5,7 +5,7 @@ import OpenAI from "openai";
 import { JSDOM } from "jsdom";
 
 const app = express();
-const HOST = "localhost";
+const HOST = "0.0.0.0";
 const PORT = 5500;
 const openai = new OpenAI({ apiKey: env.openai, organization: env.openaiOrg });
 
