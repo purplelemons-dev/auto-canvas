@@ -76,6 +76,7 @@ app.post("/v1/autocanvas/gpt", async (req, res) => {
         }).join("\n");
     } catch (e) {
         res.status(500).send(e);
+        return;
     }
 
     try {
