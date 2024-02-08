@@ -68,9 +68,10 @@ app.post("/v1/autocanvas/gpt", async (req, res) => {
         reason: string
     }[]
 }`;
+    let formattedOptions = "";
 
     try {
-        const formattedOptions = options.map(({ letter, text }) => {
+        formattedOptions = options.map(({ letter, text }) => {
             return `${letter}) ${text}`;
         }).join("\n");
     } catch (e) {
