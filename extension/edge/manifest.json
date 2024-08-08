@@ -3,6 +3,7 @@
     "manifest_version": 2,
     "name": "AutoCanvas",
     "version": "0.0.1",
+    "author": "",
     "description": "Automatically Googles answers for questions on canvas",
     "icons": {
         "1024": "icons/icon.png"
